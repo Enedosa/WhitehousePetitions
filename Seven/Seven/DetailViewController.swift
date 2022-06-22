@@ -35,5 +35,7 @@ class DetailViewController: UIViewController {
         </body>
         </html>
         """
+        
+        webView.loadHTMLString(html, baseURL: nil)
     }
 }
