@@ -9,17 +9,48 @@ import UIKit
 
 class ViewController: UITableViewController {
     var petitions = [Petition]()
+    var filteredPetitions = [Petitions]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+        let urlString: String
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Credits", style: .plain, target: self, action: #selector(creditsTapped))
+        navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Filter Search", style: .plain, target: self, action: #selector(filterTapped))
+        if  navigationController?.tabBarItem.tag == 0 {
+            urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+        } else {
+            urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
+            
+//            "https://api.whitehouse.gov/v1/petitions.json?signatureCountFloor=10000&limit=100"
+        }
         if let url = URL(string: urlString) {
             if let data = try? Data(contentsOf: url) {
                 //parse here
                 parse(json: data)
+                return
             }
         }
+        
+        showError()
+    }
+    
+    @objc func creditsTapped() {
+        let ac = UIAlertController(title: "Credits", message: "This  info is gotten from the weThePeople API from the whitehouse", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
+    }
+    
+    @objc func filterTapped() {
+        let ac = UIAlertController(title: "Search", message: "Type here to search through the petitions", preferredStyle: .actionSheet)
+//        ac.addTextField(configurationHandler: <#T##((UITextField) -> Void)?##((UITextField) -> Void)?##(UITextField) -> Void#>)
+        present(ac, animated: true)
+    }
+    
+    func showError() {
+        let ac = UIAlertController(title: "Loading error", message: "There was a problem loading the feed; Please check your connection and try again.", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
     }
     
     func parse(json: Data) {
